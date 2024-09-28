@@ -1,0 +1,258 @@
+{
+  "auth_config": {
+    "auth_type": "BASIC_AUTH",
+    "username": "{{source_config.username}}",
+    "password": "{{source_config.password}}"
+  },
+  "apis": [
+    {
+      "tag": "FETCH_ALL_ADMINISTRATORS",
+      "url": "https://onfleet.com/api/v2/admins",
+      "method": "GET",
+      "query_params": [],
+      "pagination_rule": {
+        "rule": "NONE",
+        "data_root": "$"
+      }
+    }
+  ],
+  "source_type": "Campaign Monitor",
+  "hevo_objects": [
+    {
+      "api": "FETCH_ALL_ADMINISTRATORS",
+      "name": "FetchAllAdministrators",
+      "namespace": {
+        "object_name": "administrators"
+      },
+      "parse_config": [
+        {
+          "path": "$[*]",
+          "event_name": "Administrator",
+          "primary_keys": [
+            "id"
+          ],
+          "fields_to_exclude": [],
+          "should_determine_per_record_offset": true
+        }
+      ],
+      "frequency_config": {},
+      "polling_strategy": [
+        {
+          "category_type": "TABLE_OR_REPORT_TYPE",
+          "offset_definition": [
+            {
+              "id": 0,
+              "name": "timeLastModified",
+              "value": {
+                "id": 0,
+                "function": "current_ts_seconds",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "data_type": "LONG"
+            }
+          ],
+          "pre_poll": [],
+          "per_record_offset": [
+            {
+              "parameter": {
+                "id": 1,
+                "inputs": [
+                  {
+                    "id": 0,
+                    "value": "{{offset.timeLastModified}}",
+                    "data_type": "LONG",
+                    "parameter_type": "PLACE_HOLDER"
+                  },
+                  {
+                    "id": 1,
+                    "value": "{{record.timeLastModified}}",
+                    "data_type": "LONG",
+                    "parameter_type": "PLACE_HOLDER"
+                  }
+                ],
+                "function": "max",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "offset_field_name": "timeLastModified"
+            }
+          ],
+          "post_poll": [],
+          "has_more": {
+            "id": 2,
+            "value": false,
+            "data_type": "BOOLEAN",
+            "parameter_type": "CONST"
+          },
+          "offset_display": {
+            "id": 3,
+            "inputs": [
+              {
+                "id": 1,
+                "value": "yyyy-MM-dd'T'HH:mm:ss'Z'",
+                "data_type": "STRING",
+                "parameter_type": "CONST"
+              }
+            ],
+            "function": "format_ts_seconds",
+            "data_type": "STRING",
+            "parameter_type": "FUNCTION"
+          },
+          "readable_offset_function": {
+            "id": 4,
+            "inputs": [
+              {
+                "id": 0,
+                "value": "{{offset.timeLastModified}}",
+                "data_type": "LONG",
+                "parameter_type": "PLACE_HOLDER"
+              },
+              {
+                "id": 1,
+                "value": "yyyy-MM-dd HH:mm:ss",
+                "data_type": "STRING",
+                "parameter_type": "CONST"
+              }
+            ],
+            "function": "format_ts_seconds",
+            "data_type": "STRING",
+            "parameter_type": "FUNCTION"
+          },
+          "offset_editable": true
+        }
+      ],
+      "applicable_category_types": [
+        "TABLE_OR_REPORT_TYPE"
+      ]
+    }
+  ],
+  "source_config": {
+    "config_definitions": [
+      {
+        "config_name": "username",
+        "type": "STRING",
+        "importance": "HIGH",
+        "doc": "Enter the username for basic authentication."
+      },
+      {
+        "config_name": "password",
+        "type": "PASSWORD",
+        "importance": "HIGH",
+        "doc": "Enter the password for basic authentication."
+      }
+    ],
+    "display_config": [
+      {
+        "id": 1,
+        "name": "auth_type",
+        "value": "BASIC_AUTH",
+        "data_type": "STRING",
+        "parameter_type": "CONST"
+      },
+      {
+        "id": 2,
+        "name": "api_url",
+        "value": "https://onfleet.com/api/v2/admins",
+        "data_type": "STRING",
+        "parameter_type": "CONST"
+      },
+      {
+        "id": 3,
+        "name": "method",
+        "value": "GET",
+        "data_type": "STRING",
+        "parameter_type": "CONST"
+      }
+    ],
+    "unique_source_identifier": {
+      "identifier": "{{username}}_{{password}}",
+      "parameters": [
+        {
+          "id": 0,
+          "name": "username",
+          "value": "{{source_config.username}}",
+          "data_type": "STRING",
+          "parameter_type": "PLACE_HOLDER"
+        },
+        {
+          "id": 1,
+          "name": "password",
+          "value": "{{source_config.password}}",
+          "data_type": "STRING",
+          "parameter_type": "PLACE_HOLDER"
+        }
+      ]
+    }
+  },
+  "test_connection": {
+    "api": "FETCH_ALL_ADMINISTRATORS",
+    "data_root": "$"
+  },
+  "frequency_execution_policy": {
+    "max": 86400000,
+    "min": 3600000,
+    "default": 3600000
+  },
+  "error_handling_rule": [
+    {
+      "message": "Invalid query parameters",
+      "error_code": 400,
+      "message_path": "$",
+      "poll_task_error_code": 2104
+    },
+    {
+      "message": "Invalid or missing credentials",
+      "error_code": 401,
+      "message_path": "$",
+      "poll_task_error_code": 2101
+    },
+    {
+      "error_code": 403,
+      "message_path": "$",
+      "poll_task_error_code": 2101
+    },
+    {
+      "message": "Not Found",
+      "error_code": 404,
+      "message_path": "$",
+      "poll_task_error_code": 2105
+    },
+    {
+      "message": "Method not allowed",
+      "error_code": 405,
+      "message_path": "$",
+      "poll_task_error_code": 2106
+    },
+    {
+      "message": "Conflict",
+      "error_code": 406,
+      "message_path": "$",
+      "poll_task_error_code": 2101
+    },
+    {
+      "message": "Max items exceeded",
+      "error_code": 413,
+      "message_path": "$",
+      "poll_task_error_code": 2101
+    },
+    {
+      "message": "Expectation failed",
+      "error_code": 417,
+      "message_path": "$",
+      "poll_task_error_code": 2101
+    },
+    {
+      "message": "API limit has been reached",
+      "error_code": 429,
+      "message_path": "$",
+      "poll_task_error_code": 2101
+    },
+    {
+      "message": "Internal Error",
+      "error_code": 501,
+      "message_path": "$",
+      "poll_task_error_code": 2101
+    }
+  ]
+}

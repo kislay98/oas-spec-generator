@@ -1,0 +1,28 @@
+{
+  "tag": "THEMES",
+  "url": "https://api.typeform.com/themes",
+  "method": "GET",
+  "query_params": [
+    {
+      "id": 0,
+      "name": "page",
+      "value": "{{pagination.page_no}}",
+      "data_type": "LONG",
+      "ignore_if_null": true,
+      "parameter_type": "PLACE_HOLDER"
+    },
+    {
+      "id": 1,
+      "name": "page_size",
+      "value": "200",
+      "data_type": "LONG",
+      "parameter_type": "CONST"
+    }
+  ],
+  "pagination_rule": {
+    "rule": "INCREMENTING_PAGE_NUMBER",
+    "limit": 200,
+    "data_root": "$.items",
+    "starting_page": 1
+  }
+}

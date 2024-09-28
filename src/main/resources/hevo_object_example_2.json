@@ -1,0 +1,47 @@
+{
+  "api": "THEMES",
+  "name": "Themes",
+  "namespace": {
+    "object_name": "Themes"
+  },
+  "parse_config": [
+    {
+      "path": "$.items",
+      "event_name": "Themes",
+      "primary_keys": [
+        "id"
+      ],
+      "fields_to_flatten": {
+        "logo": {
+          "should_flatten": true,
+          "field_name_prefix": "logo"
+        },
+        "colors": {
+          "should_flatten": true,
+          "field_name_prefix": "colors"
+        },
+        "fields": {
+          "should_flatten": true,
+          "field_name_prefix": "fields"
+        },
+        "screens": {
+          "should_flatten": true,
+          "field_name_prefix": "screens"
+        },
+        "background": {
+          "should_flatten": true,
+          "field_name_prefix": "background"
+        }
+      }
+    }
+  ],
+  "frequency_config": {},
+  "polling_strategy": [
+    {
+      "category_type": "TABLE_OR_REPORT_TYPE"
+    }
+  ],
+  "applicable_category_types": [
+    "TABLE_OR_REPORT_TYPE"
+  ]
+}

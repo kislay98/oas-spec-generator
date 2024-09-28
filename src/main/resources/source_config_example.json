@@ -1,0 +1,25 @@
+{
+  "source_config": {
+    "display_config": [],
+    "config_definitions": [
+      {
+        "doc": "Enter the API Token that is linked to your account",
+        "type": "PASSWORD",
+        "importance": "HIGH",
+        "config_name": "api_token"
+      }
+    ],
+    "unique_source_identifier": {
+      "identifier": "api_token",
+      "parameters": [
+        {
+          "id": 0,
+          "name": "api_token",
+          "value": "{{source_config.api_token}}",
+          "data_type": "STRING",
+          "parameter_type": "PLACE_HOLDER"
+        }
+      ]
+    }
+  }
+}

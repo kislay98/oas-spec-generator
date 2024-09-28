@@ -1,0 +1,604 @@
+{
+  "type": "object",
+  "required": [
+    "apis",
+    "hevo_objects",
+    "source_config",
+    "error_handling_rule",
+    "test_connection",
+    "frequency_execution_policy",
+    "auth_config"
+  ],
+  "properties": {
+    "apis": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "url",
+          "method"
+        ],
+        "variables": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "param_name": {
+                "type": "string"
+              },
+              "param_value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "properties": {
+          "tag": {
+            "type": "string",
+            "description": "The tag for the API, referenced in the Connector Template API component."
+          },
+          "url": {
+            "type": "string",
+            "description": "The Url string, can contain placeholders."
+          },
+          "method": {
+            "type": "string",
+            "description": "The HTTP method."
+          },
+          "headers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "ignore_if_null": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "path_params": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "ignore_if_null": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "query_params": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "ignore_if_null": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "auth_config": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "auth_type",
+            "username"
+          ],
+          "properties": {
+            "password": {
+              "type": "string",
+              "description": "Must contain place holders to config that holds the value for the password"
+            },
+            "username": {
+              "type": "string",
+              "description": "Must contain place holders to config that holds the value for the user name"
+            },
+            "auth_type": {
+              "type": "string",
+              "default": "BASIC_AUTH"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "auth_type",
+            "header_name",
+            "api_token"
+          ],
+          "properties": {
+            "api_token": {
+              "type": "string",
+              "description": "Must contain place holders to config that holds the value for the api token"
+            },
+            "auth_type": {
+              "type": "string",
+              "default": "API_TOKEN"
+            },
+            "header_name": {
+              "type": "string",
+              "description": "The header name."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "auth_type",
+            "header_name",
+            "bearer_token"
+          ],
+          "properties": {
+            "auth_type": {
+              "type": "string",
+              "default": "BEARER_TOKEN"
+            },
+            "header_name": {
+              "type": "string",
+              "description": "The header name."
+            },
+            "bearer_token": {
+              "type": "string",
+              "description": "Must contain place holders to config that holds the value for the bearer token"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "auth_type": {
+              "type": "string",
+              "default": "NO_AUTH"
+            }
+          },
+          "additionalProperties": false
+        }
+      ],
+      "description": "The type of Authentication to support"
+    },
+    "source_type": {
+      "type": "string",
+      "description": "Source type enum mapping."
+    },
+    "hevo_objects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "namespace",
+          "api",
+          "parse_config",
+          "applicable_category_types"
+        ],
+        "properties": {
+          "api": {
+            "type": "string",
+            "description": "which API_TAG to be used for the object."
+          },
+          "name": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "object",
+            "required": [
+              "object_name"
+            ],
+            "properties": {
+              "group_name": {
+                "type": "string",
+                "description": "object name of the namespace, for e.g in a Jdbc connector this would be the table name."
+              },
+              "object_name": {
+                "type": "string",
+                "description": "Group name of the namespace, for e.g in a Jdbc connector this would be the DB name/ shchema name."
+              }
+            },
+            "description": "what is displayed on the overview page object tag."
+          },
+          "parse_config": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "event_name"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Refer to https://github.com/json-path/JsonPath"
+                },
+                "event_name": {
+                  "type": "string",
+                  "description": "Event name."
+                },
+                "primary_keys": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "List of fields that are primary key attributes."
+                },
+                "fields_to_exclude": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "What fields from the response to exclude while pushing the event."
+                }
+              },
+              "description": "List of all events to be parsed out of the response."
+            },
+            "description": "What events to be extracted out of the API response, what fields to exclude, etc."
+          },
+          "frequency_config": {
+            "type": "object",
+            "properties": {
+              "defer_for": {
+                "type": "number",
+                "description": "The defer duration in millis."
+              }
+            },
+            "description": "Should the object be deferred after execution if so then define the deferral period."
+          },
+          "error_handling_rule": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "error_code"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Message override."
+                },
+                "error_code": {
+                  "type": "number",
+                  "description": "The Http status code."
+                },
+                "message_path": {
+                  "type": "string",
+                  "description": "Json path to the error message in the error response body."
+                },
+                "deferral_interval": {
+                  "type": "number",
+                  "description": "How long to defer the object for in case of the error."
+                },
+                "connect_error_code": {
+                  "type": "number",
+                  "description": "Connect error code to throw along with the Connectexception."
+                },
+                "poll_task_error_code": {
+                  "type": "number",
+                  "description": "Poll task error code to throw along with the PollTaskException."
+                }
+              }
+            }
+          },
+          "offset_management_rule": {
+            "type": "object",
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "rule",
+                  "data_root"
+                ],
+                "properties": {
+                  "rule": {
+                    "type": "string",
+                    "default": "INCREMENTING_PAGE_NUMBER"
+                  },
+                  "limit": {
+                    "type": "number"
+                  },
+                  "data_root": {
+                    "type": "string"
+                  },
+                  "starting_page": {
+                    "type": "number"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "rule",
+                  "data_root_pagination"
+                ],
+                "properties": {
+                  "rule": {
+                    "type": "string",
+                    "default": "PAGE_TOKEN"
+                  },
+                  "data_root_pagination": {
+                    "type": "string"
+                  }
+                }
+              },
+              {}
+            ],
+            "description": "Offset management Rule identifier. This will be some enum."
+          },
+          "applicable_category_types": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "TABLE_OR_REPORT_TYPE",
+                "HISTORICAL_TABLE_TYPE",
+                "REFRESHER_TYPE"
+              ],
+              "type": "string",
+              "description": "Task category type."
+            },
+            "minItems": 1
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "source_config": {
+      "type": "object",
+      "required": [
+        "unique_source_identifier",
+        "config_definitions"
+      ],
+      "properties": {
+        "display_config": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              },
+              "ignore_if_null": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "config_definitions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "config_name",
+              "importance",
+              "doc",
+              "type"
+            ],
+            "properties": {
+              "doc": {
+                "type": "string",
+                "description": "Config documentation."
+              },
+              "type": {
+                "enum": [
+                  "BOOLEAN",
+                  "STRING",
+                  "INT",
+                  "LONG",
+                  "DOUBLE",
+                  "PASSWORD"
+                ],
+                "type": "string",
+                "description": "one of BOOLEAN,STRING,INT,LONG,DOUBLE,PASSWORD"
+              },
+              "importance": {
+                "enum": [
+                  "HIGH",
+                  "MEDIUM",
+                  "LOW"
+                ],
+                "type": "string",
+                "description": "One of HIGH, MEDIUM & LOW"
+              },
+              "config_name": {
+                "type": "string",
+                "description": "Config variable."
+              }
+            },
+            "description": "Will define the ConfigDefinition."
+          },
+          "minItems": 1,
+          "description": "Every object is a config variable."
+        },
+        "unique_source_identifier": {
+          "type": "object",
+          "required": [
+            "identifier"
+          ],
+          "properties": {
+            "identifier": {
+              "type": "string"
+            },
+            "parameters": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_connection": {
+      "type": "object",
+      "required": [
+        "api",
+        "data_root"
+      ],
+      "properties": {
+        "api": {
+          "type": "string",
+          "description": "Which api to be used for test connection."
+        },
+        "data_root": {
+          "type": "string",
+          "description": "Which json path to use for validation."
+        }
+      },
+      "description": "Test connection endpoint to be used and more."
+    },
+    "error_handling_rule": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "error_code"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message override."
+          },
+          "error_code": {
+            "type": "number",
+            "description": "The Http status code."
+          },
+          "message_path": {
+            "type": "string",
+            "description": "Json path to the error message in the error response body."
+          },
+          "deferral_interval": {
+            "type": "number",
+            "description": "How long to defer the object for in case of the error."
+          },
+          "connect_error_code": {
+            "type": "number",
+            "description": "Connect error code to throw along with the Connectexception."
+          },
+          "poll_task_error_code": {
+            "type": "number",
+            "description": "Poll task error code to throw along with the PollTaskException."
+          }
+        }
+      },
+      "default": [
+        {
+          "error_code": 400,
+          "message_path": "$",
+          "poll_task_error_code": 2104
+        },
+        {
+          "error_code": 401,
+          "message_path": "$",
+          "poll_task_error_code": 2101
+        },
+        {
+          "error_code": 403,
+          "message_path": "$",
+          "poll_task_error_code": 2101
+        },
+        {
+          "error_code": 404,
+          "message_path": "$",
+          "poll_task_error_code": 2105
+        },
+        {
+          "error_code": 405,
+          "message_path": "$",
+          "poll_task_error_code": 2106
+        },
+        {
+          "error_code": 406,
+          "message_path": "$",
+          "poll_task_error_code": 2101
+        },
+        {
+          "error_code": 422,
+          "message_path": "$",
+          "poll_task_error_code": 2101
+        },
+        {
+          "error_code": 429,
+          "message_path": "$",
+          "poll_task_error_code": 2101
+        },
+        {
+          "error_code": 500,
+          "message_path": "$",
+          "poll_task_error_code": 2101
+        },
+        {
+          "error_code": 502,
+          "message_path": "$",
+          "poll_task_error_code": 2129
+        },
+        {
+          "error_code": 503,
+          "message_path": "$",
+          "poll_task_error_code": 2101
+        }
+      ]
+    },
+    "frequency_execution_policy": {
+      "type": "object",
+      "required": [
+        "min",
+        "max",
+        "default"
+      ],
+      "properties": {
+        "max": {
+          "type": "number",
+          "default": 86400000,
+          "maximum": 86400000,
+          "description": "Interval in millis."
+        },
+        "min": {
+          "type": "number",
+          "default": 3600000,
+          "minimum": 900000,
+          "description": "Interval in millis."
+        },
+        "default": {
+          "type": "number",
+          "default": 3600000,
+          "description": "Interval in millis."
+        }
+      },
+      "description": "The default/min/max frequency of the source ingestion."
+    }
+  },
+  "description": "Rest of the configurations can be included in the Source type enum (Hardcoded in the backend)."
+}

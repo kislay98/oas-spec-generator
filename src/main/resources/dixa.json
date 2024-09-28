@@ -1,0 +1,726 @@
+{
+  "apis": [
+    {
+      "tag": "conversations",
+      "url": "https://exports.dixa.io/v1/conversation_export",
+      "method": "GET",
+      "query_params": [
+        {
+          "id": 0,
+          "name": "updated_before",
+          "inputs": [
+            {
+              "id": 0,
+              "value": "{{offset.updated_before}}",
+              "data_type": "LONG",
+              "ignore_if_null": false,
+              "parameter_type": "PLACE_HOLDER"
+            },
+            {
+              "id": 1,
+              "value": 1000,
+              "data_type": "LONG",
+              "parameter_type": "CONST"
+            }
+          ],
+          "function": "multiply",
+          "data_type": "LONG",
+          "parameter_type": "FUNCTION"
+        },
+        {
+          "id": 0,
+          "name": "updated_after",
+          "inputs": [
+            {
+              "id": 0,
+              "value": "{{offset.updated_after}}",
+              "data_type": "LONG",
+              "ignore_if_null": false,
+              "parameter_type": "PLACE_HOLDER"
+            },
+            {
+              "id": 1,
+              "value": 1000,
+              "data_type": "LONG",
+              "parameter_type": "CONST"
+            }
+          ],
+          "function": "multiply",
+          "data_type": "LONG",
+          "parameter_type": "FUNCTION"
+        }
+      ]
+    },
+    {
+      "tag": "messages",
+      "url": "https://exports.dixa.io/v1/message_export",
+      "method": "GET",
+      "query_params": [
+        {
+          "id": 0,
+          "name": "created_before",
+          "inputs": [
+            {
+              "id": 0,
+              "value": "{{offset.created_before}}",
+              "data_type": "LONG",
+              "ignore_if_null": false,
+              "parameter_type": "PLACE_HOLDER"
+            },
+            {
+              "id": 1,
+              "value": 1000,
+              "data_type": "LONG",
+              "parameter_type": "CONST"
+            }
+          ],
+          "function": "multiply",
+          "data_type": "LONG",
+          "parameter_type": "FUNCTION"
+        },
+        {
+          "id": 0,
+          "name": "created_after",
+          "inputs": [
+            {
+              "id": 0,
+              "value": "{{offset.created_after}}",
+              "data_type": "LONG",
+              "ignore_if_null": false,
+              "parameter_type": "PLACE_HOLDER"
+            },
+            {
+              "id": 1,
+              "value": 1000,
+              "data_type": "LONG",
+              "parameter_type": "CONST"
+            }
+          ],
+          "function": "multiply",
+          "data_type": "LONG",
+          "parameter_type": "FUNCTION"
+        }
+      ]
+    },
+    {
+      "tag": "agents_test",
+      "url": "https://dev.dixa.io/v1/agents",
+      "method": "GET"
+    }
+  ],
+  "auth_config": {
+    "auth_type": "BEARER_TOKEN",
+    "header_name": "Authorization",
+    "bearer_token": "{{source_config.api_token}}"
+  },
+  "source_type": "DIXA",
+  "hevo_objects": [
+    {
+      "api": "conversations",
+      "name": "Conversations",
+      "namespace": {
+        "object_name": "conversations"
+      },
+      "parse_config": [
+        {
+          "path": "$",
+          "event_name": "Conversations",
+          "primary_keys": [
+            "id"
+          ],
+          "should_determine_per_record_offset": true
+        }
+      ],
+      "frequency_config": {},
+      "is_parent_object": false,
+      "polling_strategy": [
+        {
+          "has_more": {
+            "id": 0,
+            "value": "{{offset.has_record}}",
+            "data_type": "BOOLEAN",
+            "parameter_type": "PLACE_HOLDER"
+          },
+          "pre_poll": [
+            {
+              "parameter": {
+                "id": 0,
+                "name": "updated_before",
+                "value": "{{offset.updated_after}}",
+                "data_type": "LONG",
+                "ignore_if_null": true,
+                "parameter_type": "PLACE_HOLDER"
+              },
+              "offset_field_name": "updated_before"
+            },
+            {
+              "parameter": {
+                "id": 1,
+                "name": "has_record",
+                "value": false,
+                "data_type": "BOOLEAN",
+                "ignore_if_null": true,
+                "parameter_type": "CONST"
+              },
+              "offset_field_name": "has_record"
+            },
+            {
+              "parameter": {
+                "id": 2,
+                "name": "updated_after",
+                "inputs": [
+                  {
+                    "id": 0,
+                    "name": "updated_after",
+                    "value": "{{offset.updated_after}}",
+                    "data_type": "LONG",
+                    "ignore_if_null": true,
+                    "parameter_type": "PLACE_HOLDER"
+                  },
+                  {
+                    "id": 1,
+                    "inputs": [
+                      {
+                        "id": 0,
+                        "value": 30,
+                        "data_type": "LONG",
+                        "parameter_type": "CONST"
+                      }
+                    ],
+                    "function": "days_to_seconds",
+                    "data_type": "LONG",
+                    "parameter_type": "FUNCTION"
+                  }
+                ],
+                "function": "subtract",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "offset_field_name": "updated_after"
+            }
+          ],
+          "category_type": "HISTORICAL_TABLE_TYPE",
+          "offset_definition": [
+            {
+              "id": 0,
+              "name": "updated_before",
+              "value": {
+                "id": 0,
+                "function": "current_ts_seconds",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "data_type": "LONG"
+            },
+            {
+              "id": 1,
+              "name": "updated_after",
+              "value": {
+                "id": 0,
+                "function": "current_ts_seconds",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "data_type": "LONG"
+            },
+            {
+              "id": 2,
+              "name": "has_record",
+              "value": {
+                "id": 0,
+                "value": false,
+                "data_type": "BOOLEAN",
+                "parameter_type": "CONST"
+              },
+              "data_type": "BOOLEAN"
+            }
+          ],
+          "per_record_offset": [
+            {
+              "parameter": {
+                "id": 0,
+                "value": true,
+                "data_type": "BOOLEAN",
+                "parameter_type": "CONST"
+              },
+              "offset_field_name": "has_record"
+            }
+          ]
+        },
+        {
+          "pre_poll": [
+            {
+              "parameter": {
+                "id": 0,
+                "name": "updated_before",
+                "function": "current_ts_seconds",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "offset_field_name": "updated_before"
+            }
+          ],
+          "post_poll": [
+            {
+              "parameter": {
+                "id": 0,
+                "name": "updated_after",
+                "function": "current_ts_seconds",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "offset_field_name": "updated_after"
+            }
+          ],
+          "edit_offset": [
+            {
+              "parameter": {
+                "id": 0,
+                "inputs": [
+                  {
+                    "id": 0,
+                    "value": "{{new_offset}}",
+                    "data_type": "LONG",
+                    "ignore_if_null": false,
+                    "parameter_type": "PLACE_HOLDER"
+                  },
+                  {
+                    "id": 1,
+                    "value": 1000,
+                    "data_type": "LONG",
+                    "parameter_type": "CONST"
+                  }
+                ],
+                "function": "divide",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "offset_field_name": "updated_after"
+            }
+          ],
+          "category_type": "TABLE_OR_REPORT_TYPE",
+          "offset_display": {
+            "id": 0,
+            "inputs": [
+              {
+                "id": 0,
+                "value": "{{offset.updated_after}}",
+                "data_type": "LONG",
+                "ignore_if_null": false,
+                "parameter_type": "PLACE_HOLDER"
+              },
+              {
+                "id": 1,
+                "value": 1000,
+                "data_type": "LONG",
+                "parameter_type": "CONST"
+              }
+            ],
+            "function": "multiply",
+            "data_type": "LONG",
+            "parameter_type": "FUNCTION"
+          },
+          "offset_editable": true,
+          "offset_definition": [
+            {
+              "id": 0,
+              "name": "updated_before",
+              "value": {
+                "id": 0,
+                "function": "current_ts_seconds",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "data_type": "LONG"
+            },
+            {
+              "id": 1,
+              "name": "updated_after",
+              "value": {
+                "id": 0,
+                "function": "current_ts_seconds",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "data_type": "LONG"
+            }
+          ],
+          "readable_offset_function": {
+            "id": 0,
+            "inputs": [
+              {
+                "id": 0,
+                "value": "{{offset.updated_after}}",
+                "data_type": "LONG",
+                "parameter_type": "PLACE_HOLDER"
+              },
+              {
+                "id": 1,
+                "value": "yyyy-MM-dd HH:mm:ss",
+                "data_type": "STRING",
+                "parameter_type": "CONST"
+              }
+            ],
+            "function": "format_ts_seconds",
+            "data_type": "STRING",
+            "parameter_type": "FUNCTION"
+          }
+        }
+      ],
+      "applicable_category_types": [
+        "HISTORICAL_TABLE_TYPE",
+        "TABLE_OR_REPORT_TYPE"
+      ]
+    },
+    {
+      "api": "messages",
+      "name": "Messages",
+      "namespace": {
+        "object_name": "messages"
+      },
+      "parse_config": [
+        {
+          "path": "$",
+          "event_name": "Messages",
+          "primary_keys": [
+            "id"
+          ],
+          "should_determine_per_record_offset": true
+        }
+      ],
+      "frequency_config": {},
+      "is_parent_object": false,
+      "polling_strategy": [
+        {
+          "has_more": {
+            "id": 0,
+            "value": "{{offset.has_record}}",
+            "data_type": "BOOLEAN",
+            "parameter_type": "PLACE_HOLDER"
+          },
+          "pre_poll": [
+            {
+              "parameter": {
+                "id": 0,
+                "name": "created_before",
+                "value": "{{offset.created_after}}",
+                "data_type": "LONG",
+                "ignore_if_null": true,
+                "parameter_type": "PLACE_HOLDER"
+              },
+              "offset_field_name": "created_before"
+            },
+            {
+              "parameter": {
+                "id": 1,
+                "name": "has_record",
+                "value": false,
+                "data_type": "BOOLEAN",
+                "ignore_if_null": true,
+                "parameter_type": "CONST"
+              },
+              "offset_field_name": "has_record"
+            },
+            {
+              "parameter": {
+                "id": 2,
+                "name": "created_after",
+                "inputs": [
+                  {
+                    "id": 0,
+                    "name": "created_after",
+                    "value": "{{offset.created_after}}",
+                    "data_type": "LONG",
+                    "ignore_if_null": true,
+                    "parameter_type": "PLACE_HOLDER"
+                  },
+                  {
+                    "id": 1,
+                    "inputs": [
+                      {
+                        "id": 0,
+                        "value": 30,
+                        "data_type": "LONG",
+                        "parameter_type": "CONST"
+                      }
+                    ],
+                    "function": "days_to_seconds",
+                    "data_type": "LONG",
+                    "parameter_type": "FUNCTION"
+                  }
+                ],
+                "function": "subtract",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "offset_field_name": "created_after"
+            }
+          ],
+          "category_type": "HISTORICAL_TABLE_TYPE",
+          "offset_definition": [
+            {
+              "id": 0,
+              "name": "created_before",
+              "value": {
+                "id": 0,
+                "function": "current_ts_seconds",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "data_type": "LONG"
+            },
+            {
+              "id": 1,
+              "name": "created_after",
+              "value": {
+                "id": 0,
+                "function": "current_ts_seconds",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "data_type": "LONG"
+            },
+            {
+              "id": 2,
+              "name": "has_record",
+              "value": {
+                "id": 0,
+                "value": false,
+                "data_type": "BOOLEAN",
+                "parameter_type": "CONST"
+              },
+              "data_type": "BOOLEAN"
+            }
+          ],
+          "per_record_offset": [
+            {
+              "parameter": {
+                "id": 0,
+                "value": true,
+                "data_type": "BOOLEAN",
+                "parameter_type": "CONST"
+              },
+              "offset_field_name": "has_record"
+            }
+          ]
+        },
+        {
+          "pre_poll": [
+            {
+              "parameter": {
+                "id": 0,
+                "name": "created_before",
+                "function": "current_ts_seconds",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "offset_field_name": "created_before"
+            }
+          ],
+          "post_poll": [
+            {
+              "parameter": {
+                "id": 0,
+                "name": "created_after",
+                "function": "current_ts_seconds",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "offset_field_name": "created_after"
+            }
+          ],
+          "edit_offset": [
+            {
+              "parameter": {
+                "id": 0,
+                "inputs": [
+                  {
+                    "id": 0,
+                    "value": "{{new_offset}}",
+                    "data_type": "LONG",
+                    "ignore_if_null": false,
+                    "parameter_type": "PLACE_HOLDER"
+                  },
+                  {
+                    "id": 1,
+                    "value": 1000,
+                    "data_type": "LONG",
+                    "parameter_type": "CONST"
+                  }
+                ],
+                "function": "divide",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "offset_field_name": "created_after"
+            }
+          ],
+          "category_type": "TABLE_OR_REPORT_TYPE",
+          "offset_display": {
+            "id": 0,
+            "inputs": [
+              {
+                "id": 0,
+                "value": "{{offset.created_after}}",
+                "data_type": "LONG",
+                "ignore_if_null": false,
+                "parameter_type": "PLACE_HOLDER"
+              },
+              {
+                "id": 1,
+                "value": 1000,
+                "data_type": "LONG",
+                "parameter_type": "CONST"
+              }
+            ],
+            "function": "multiply",
+            "data_type": "LONG",
+            "parameter_type": "FUNCTION"
+          },
+          "offset_editable": true,
+          "offset_definition": [
+            {
+              "id": 0,
+              "name": "created_before",
+              "value": {
+                "id": 0,
+                "function": "current_ts_seconds",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "data_type": "LONG"
+            },
+            {
+              "id": 1,
+              "name": "created_after",
+              "value": {
+                "id": 0,
+                "function": "current_ts_seconds",
+                "data_type": "LONG",
+                "parameter_type": "FUNCTION"
+              },
+              "data_type": "LONG"
+            }
+          ],
+          "readable_offset_function": {
+            "id": 0,
+            "inputs": [
+              {
+                "id": 0,
+                "value": "{{offset.created_after}}",
+                "data_type": "LONG",
+                "parameter_type": "PLACE_HOLDER"
+              },
+              {
+                "id": 1,
+                "value": "yyyy-MM-dd HH:mm:ss",
+                "data_type": "STRING",
+                "parameter_type": "CONST"
+              }
+            ],
+            "function": "format_ts_seconds",
+            "data_type": "STRING",
+            "parameter_type": "FUNCTION"
+          }
+        }
+      ],
+      "applicable_category_types": [
+        "HISTORICAL_TABLE_TYPE",
+        "TABLE_OR_REPORT_TYPE"
+      ]
+    }
+  ],
+  "source_config": {
+    "display_config": [],
+    "config_definitions": [
+      {
+        "doc": "Enter the API Token that is linked to your account",
+        "type": "PASSWORD",
+        "importance": "HIGH",
+        "config_name": "api_token"
+      }
+    ],
+    "unique_source_identifier": {
+      "identifier": "api_token",
+      "parameters": [
+        {
+          "id": 0,
+          "name": "api_token",
+          "value": "{{source_config.api_token}}",
+          "data_type": "STRING",
+          "parameter_type": "PLACE_HOLDER"
+        }
+      ]
+    }
+  },
+  "test_connection": {
+    "api": "agents_test",
+    "data_root": "$.data"
+  },
+  "error_handling_rule": [
+    {
+      "message": "Invalid query parameters",
+      "error_code": 400,
+      "message_path": "$",
+      "poll_task_error_code": 2104
+    },
+    {
+      "message": "Invalid or missing credentials",
+      "error_code": 401,
+      "message_path": "$",
+      "poll_task_error_code": 2101
+    },
+    {
+      "error_code": 403,
+      "message_path": "$",
+      "poll_task_error_code": 2101
+    },
+    {
+      "message": "Not Found",
+      "error_code": 404,
+      "message_path": "$",
+      "poll_task_error_code": 2105
+    },
+    {
+      "message": "Method not allowed",
+      "error_code": 405,
+      "message_path": "$",
+      "poll_task_error_code": 2106
+    },
+    {
+      "message": "Conflict",
+      "error_code": 406,
+      "message_path": "$",
+      "poll_task_error_code": 2101
+    },
+    {
+      "message": "Max items exceeded",
+      "error_code": 413,
+      "message_path": "$",
+      "poll_task_error_code": 2101
+    },
+    {
+      "message": "Expectation failed",
+      "error_code": 417,
+      "message_path": "$",
+      "poll_task_error_code": 2101
+    },
+    {
+      "message": "API limit has been reached",
+      "error_code": 429,
+      "message_path": "$",
+      "poll_task_error_code": 2101
+    },
+    {
+      "message": "Internal Error",
+      "error_code": 501,
+      "message_path": "$",
+      "poll_task_error_code": 2101
+    }
+  ],
+  "frequency_execution_policy": {
+    "max": 86400000,
+    "min": 3600000,
+    "default": 3600000
+  }
+}

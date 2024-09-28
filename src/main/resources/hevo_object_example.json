@@ -1,0 +1,35 @@
+{
+  "api": "WORKSPACES",
+  "name": "Workspaces",
+  "namespace": {
+    "object_name": "Workspaces"
+  },
+  "parse_config": [
+    {
+      "path": "$.items",
+      "event_name": "Workspaces",
+      "primary_keys": [
+        "id"
+      ],
+      "fields_to_flatten": {
+        "self": {
+          "should_flatten": true,
+          "field_name_prefix": "self"
+        },
+        "forms": {
+          "should_flatten": true,
+          "field_name_prefix": "forms"
+        }
+      }
+    }
+  ],
+  "frequency_config": {},
+  "polling_strategy": [
+    {
+      "category_type": "TABLE_OR_REPORT_TYPE"
+    }
+  ],
+  "applicable_category_types": [
+    "TABLE_OR_REPORT_TYPE"
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "Campaign Monitor API",
+    "version" : "3.3.0",
+    "description" : "API for fetching all campaigns from a specific client in Campaign Monitor."
+  },
+  "servers" : [ {
+    "url" : "https://api.createsend.com/api/v3.3"
+  } ],
+  "paths" : {
+    "/campaigns/{clientid}.json" : {
+      "get" : {
+        "summary" : "Fetch All Campaigns",
+        "description" : "Retrieves all campaigns for a specified client ID.",
+        "operationId" : "getCampaigns",
+        "parameters" : [ {
+          "name" : "clientid",
+          "in" : "path",
+          "description" : "The unique identifier for the client.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "A list of campaigns",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Campaign"
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized - API key is missing or invalid"
+          },
+          "404" : {
+            "description" : "Client ID not found"
+          }
+        },
+        "security" : [ {
+          "CampaignMonitorAuth" : [ ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "Campaign" : {
+        "type" : "object",
+        "properties" : {
+          "CampaignID" : {
+            "type" : "string",
+            "description" : "Unique identifier for the campaign."
+          },
+          "Name" : {
+            "type" : "string",
+            "description" : "Name of the campaign."
+          },
+          "Subject" : {
+            "type" : "string",
+            "description" : "Subject line of the campaign."
+          },
+          "SendDate" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "The date and time the campaign was sent."
+          },
+          "TotalRecipients" : {
+            "type" : "integer",
+            "description" : "The total number of recipients the campaign was sent to."
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "CampaignMonitorAuth" : {
+        "type" : "http",
+        "scheme" : "basic",
+        "description" : "Use your API key with HTTP Basic Authentication. API key as the username and password can be left blank."
+      }
+    }
+  }
+}
