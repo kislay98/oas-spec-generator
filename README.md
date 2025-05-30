@@ -11,8 +11,7 @@ git clone https://github.com/kislayio/oas-spec-generator
 cd oas-spec-generator
 
 
-Ensure config.yml is placed in src/main/resources/config.yml. Ping @kislay98 or @amit-kislaydata for the config file.
-
+Ensure config.yml is placed in src/main/resources/config.yml. Email me at kislaykumar@gmail.com if you have any issue in constructing the creds file.
 *Build:*
 bash
 mvn clean package
