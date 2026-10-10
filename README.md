@@ -7,11 +7,11 @@
 
 *Clone the Repository:*
 bash
-git clone https://github.com/kislayio/oas-spec-generator
+git clone https://github.com/kislay98/oas-spec-generator
 cd oas-spec-generator
 
 
-Ensure config.yml is placed in src/main/resources/config.yml. Email me at kislaykumar@gmail.com if you have any issue in constructing the creds file.
+Ensure config.yml is placed in src/main/resources/config.yml. Email me at kislaykumar100@gmail.com if you have any issue in constructing the creds file.
 *Build:*
 bash
 mvn clean package
